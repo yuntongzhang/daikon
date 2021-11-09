@@ -25,6 +25,7 @@ import java.io.PrintStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -91,6 +92,9 @@ public class InvariantChecker {
   static HashSet<Invariant> testedInvariants = new HashSet<>(); // Yoav added
   static HashSet<Invariant> activeInvariants = new HashSet<>(); // Yoav added
   static LinkedHashSet<String> outputComma = new LinkedHashSet<>(); // Yoav added
+
+  static Map<Invariant, Boolean> isInvariantViolatedByAll = new HashMap<>();
+  static Map<Invariant, String> invariantOldRep = new HashMap<>();
 
   public static void main(String[] args)
       throws FileNotFoundException, StreamCorruptedException, OptionalDataException, IOException,
@@ -317,6 +321,9 @@ public class InvariantChecker {
             continue;
           }
           activeInvariants.add(inv);
+          // save old representation of invariant, since adding new samples
+          // to it may change its representation
+          invariantOldRep.put(inv, inv.format());
 
           // String n = invariant2str(ppt, inv);
           // if (!allInvariants.contains(inv) && allInvariantsStr.contains(n)) {
@@ -338,21 +345,29 @@ public class InvariantChecker {
     FileIO.read_data_trace_files(dtrace_files, ppts, processor, false);
     progress.shouldStop = true;
     System.out.println();
-    System.out.printf(
-        "%s: %,d errors found in %,d samples (%s)%n",
-        inv_file, error_cnt, sample_cnt, toPercentage(error_cnt, sample_cnt));
+    // System.out.printf(
+    //     "%s: %,d errors found in %,d samples (%s)%n",
+    //     inv_file, error_cnt, sample_cnt, toPercentage(error_cnt, sample_cnt));
     int failedCount = failedInvariants.size();
     int testedCount = testedInvariants.size();
     String percent = toPercentage(failedCount, testedCount);
-    System.out.println(
-        inv_file
-            + ": "
-            + failedCount
-            + " false positives, out of "
-            + testedCount
-            + ", which is "
-            + percent
-            + ".");
+    // System.out.println(
+    //     inv_file
+    //         + ": "
+    //         + failedCount
+    //         + " false positives, out of "
+    //         + testedCount
+    //         + ", which is "
+    //         + percent
+    //         + ".");
+    
+    System.out.println("~~~ Printing invariants violated by all samples ~~~");
+    for (Invariant inv : isInvariantViolatedByAll.keySet()) {
+      if (isInvariantViolatedByAll.get(inv) == true) {
+        System.out.println(invariantOldRep.get(inv));
+      }
+    }
+
     if (false) {
       for (Invariant inv : failedInvariants) {
         System.out.printf("+%s:%s%n", inv.ppt.name(), inv.format());
@@ -511,6 +526,12 @@ public class InvariantChecker {
             continue;
           }
 
+          // initialize the map if seeing this invariant for the first time
+          if (!isInvariantViolatedByAll.containsKey(inv))
+          {
+            isInvariantViolatedByAll.put(inv, true);
+          }
+
           // String invRep = invariant2str(ppt, inv);
           testedInvariants.add(inv);
 
@@ -536,6 +557,8 @@ public class InvariantChecker {
             failedInvariants.add(inv);
             activeInvariants.remove(inv);
             error_cnt++;
+          } else { // no change after adding in new sample
+            isInvariantViolatedByAll.put(inv, false);
           }
         }
       }

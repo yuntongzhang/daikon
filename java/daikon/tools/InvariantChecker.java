@@ -13,6 +13,7 @@ import daikon.ValueTuple;
 import daikon.VarInfo;
 import daikon.inv.Invariant;
 import daikon.inv.InvariantStatus;
+import daikon.inv.binary.twoScalar.IntDiffGreaterThan;
 import daikon.inv.filter.InvariantFilters;
 import daikon.split.PptSplitter;
 import gnu.getopt.*;
@@ -538,7 +539,19 @@ public class InvariantChecker {
           // Store string representation of original invariant for verbose mode
           String invRep = quiet ? null : inv.format();
 
-          InvariantStatus status = inv.add_sample(vt, 1);
+          // we can't use the normal routine for IntDiffGreaterThan: simply adding 
+          // new samples to it will refine bounds, instead of invalidating it
+          InvariantStatus status;
+          if (inv instanceof IntDiffGreaterThan) {
+            VarInfo v1 = inv.ppt.var_infos[0];
+            VarInfo v2 = inv.ppt.var_infos[1];
+            long val1 = ((Long) vt.getValue(v1)).longValue();
+            long val2 = ((Long) vt.getValue(v2)).longValue();
+            status = ((IntDiffGreaterThan) inv).add_to_check(val1, val2, 1);
+          } else {
+            status = inv.add_sample(vt, 1);
+          }
+
           sample_cnt++;
           if (status != InvariantStatus.NO_CHANGE) {
             if (!quiet) {

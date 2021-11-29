@@ -27,6 +27,7 @@ import daikon.inv.binary.twoScalar.FloatGreaterThan;
 import daikon.inv.binary.twoScalar.FloatLessEqual;
 import daikon.inv.binary.twoScalar.FloatLessThan;
 import daikon.inv.binary.twoScalar.FloatNonEqual;
+import daikon.inv.binary.twoScalar.IntDiffGreaterThan;
 import daikon.inv.binary.twoScalar.IntEqual;
 import daikon.inv.binary.twoScalar.IntGreaterEqual;
 import daikon.inv.binary.twoScalar.IntGreaterThan;
@@ -1594,6 +1595,9 @@ public final class Daikon {
 
       // Standard binary string invariants
       proto_invs.addAll(StdString.get_proto_all());
+
+      // IntDiff, newly added
+      proto_invs.add(IntDiffGreaterThan.get_proto());
     }
 
     // Binary sequence-sequence invariants

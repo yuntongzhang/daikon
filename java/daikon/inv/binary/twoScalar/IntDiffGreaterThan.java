@@ -42,12 +42,12 @@ public final class IntDiffGreaterThan extends TwoScalar {
   public static final Logger debug = Logger.getLogger("daikon.inv.binary.twoScalar.IntDiffGreaterThan");
 
   // tunable parameters. controls min max values of the (lower bound) constant
-  public static final long MAX_A = 100, MIN_A = 0;
+  public static final long MAX_A = 10, MIN_A = 1;
   // upper bound of the diff for any sample. If a sample with very high diff is
   // seen, this means current invariant is likely uninteresting
   public static final long implicit_upper_bound = 100000;
   // the constant in the invariant x - y >= a
-  public long a = MAX_A;
+  public long a = MIN_A;
 
   IntDiffGreaterThan(PptSlice ppt) {
     super(ppt);
@@ -169,7 +169,11 @@ public final class IntDiffGreaterThan extends TwoScalar {
         return InvariantStatus.FALSIFIED;
     }
     // now diff should be in range [implicit_upper_bound, MIN_A]
-    if (diff < a)
+    // use new samples to push a from 1 to larger values. This `push` only happens
+    // when we see a sample with small diff. If all samples have large diff,
+    // a does not move and will remain 1
+    // Purpose: x - y >= 1 is easier to be invalidated (than x - y >= 10), if its wrong
+    if (diff <= MAX_A && diff >= a)
         a = diff; // update bound
     
     return InvariantStatus.NO_CHANGE;

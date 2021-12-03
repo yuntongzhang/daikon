@@ -42,12 +42,12 @@ public final class IntDiffGreaterThan extends TwoScalar {
   public static final Logger debug = Logger.getLogger("daikon.inv.binary.twoScalar.IntDiffGreaterThan");
 
   // tunable parameters. controls min max values of the (lower bound) constant
-  public static final long MAX_A = 10, MIN_A = 1;
-  // upper bound of the diff for any sample. If a sample with very high diff is
-  // seen, this means current invariant is likely uninteresting
-  public static final long implicit_upper_bound = 100000;
+  public static final long MAX_A = 100000, MIN_A = 1;
+  // upper bound for interesting a - two variables that are very far apart
+  // are not interesting
+  public static final long interesting_upper_bound = 10;
   // the constant in the invariant x - y >= a
-  public long a = MIN_A;
+  public long a = MAX_A;
 
   IntDiffGreaterThan(PptSlice ppt) {
     super(ppt);
@@ -163,17 +163,14 @@ public final class IntDiffGreaterThan extends TwoScalar {
           "add_modified (" + v1 + ", " + v2 + ",  ppt.num_values = " + ppt.num_values() + ")");
     }
     long diff = v1 - v2;
-    if (diff > implicit_upper_bound || diff < MIN_A) {
+    if (diff > MAX_A || diff < MIN_A) {
         if (logOn() || debug.isLoggable(Level.FINE))
             log(debug, "destroy in add_modified (" + v1 + ", " + v2 + ",  " + count + ")");
         return InvariantStatus.FALSIFIED;
     }
-    // now diff should be in range [implicit_upper_bound, MIN_A]
-    // use new samples to push a from 1 to larger values. This `push` only happens
-    // when we see a sample with small diff. If all samples have large diff,
-    // a does not move and will remain 1
-    // Purpose: x - y >= 1 is easier to be invalidated (than x - y >= 10), if its wrong
-    if (diff <= MAX_A && diff >= a)
+    // now diff should be in range [MAX_A, MIN_A]
+    // use new samples to push a to lower values
+    if (diff < a)
         a = diff; // update bound
     
     return InvariantStatus.NO_CHANGE;
@@ -182,6 +179,10 @@ public final class IntDiffGreaterThan extends TwoScalar {
   // Used in InvariantChecker.
   // Only check against the current value of a, without modifying it.
   public InvariantStatus add_to_check(long v1, long v2, int count) {
+    if (a >= interesting_upper_bound) {
+      // InvaraintChecker filters out uninteresting invariants with large a
+      return InvariantStatus.FALSIFIED;
+    }
     long diff = v1 - v2;
     if (diff < a) {
         return InvariantStatus.FALSIFIED;

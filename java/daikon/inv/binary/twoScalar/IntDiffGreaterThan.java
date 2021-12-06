@@ -181,7 +181,9 @@ public final class IntDiffGreaterThan extends TwoScalar {
   public InvariantStatus add_to_check(long v1, long v2, int count) {
     if (a >= interesting_upper_bound) {
       // InvaraintChecker filters out uninteresting invariants with large a
-      return InvariantStatus.FALSIFIED;
+      // if InvariantChecker sees a NO_CHANGE sample, this invariant will not 
+      // be returned
+      return InvariantStatus.NO_CHANGE;
     }
     long diff = v1 - v2;
     if (diff < a) {

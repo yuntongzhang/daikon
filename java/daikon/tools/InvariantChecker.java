@@ -316,7 +316,8 @@ public class InvariantChecker {
             continue;
           }
 
-          if (doFilter && fi.shouldKeep(inv) == null) {
+          if (doFilter && fi.shouldKeep(inv) == null
+             && !(inv instanceof IntDiffGreaterThan)) {
             // System.out.printf("inv ignored (filter): %s:%s%n",
             //                     inv.ppt.name(), inv.format());
             continue;

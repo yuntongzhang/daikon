@@ -1366,6 +1366,28 @@ public final class INTEQUAL extends SUPERCLASS IMPLEMENTSCOMPARISON {
     }
     return suppressions;
   }
+#elif defined(GREATERTHAN)
+  /** Returns the non-instantiating suppressions for this invariant. */
+  @Pure
+  @Override
+  public @NonNull NISuppressionSet get_ni_suppressions() {
+    if (suppressions == null) {
+      #if defined(GREATERTHAN)
+        NISuppressee suppressee = new NISuppressee(INTEQUAL.class, 2);
+      #endif
+
+      // suppressor definitions (used in suppressions below)
+      NISuppressor v1_diff_v2 = new NISuppressor(0, 1, IntDiffGreaterThan.class);
+
+      suppressions =
+          new NISuppressionSet(
+              new NISuppression[] {
+                // v1 - v2 >= 1 => v1 > v2
+                new NISuppression(v1_diff_v2, suppressee),
+              });
+    }
+    return suppressions;
+  }
 #else
   /** Returns the non-instantiating suppressions for this invariant. */
   @Pure

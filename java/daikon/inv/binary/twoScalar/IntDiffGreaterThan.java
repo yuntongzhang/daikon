@@ -45,7 +45,7 @@ public final class IntDiffGreaterThan extends TwoScalar {
   public static final long MAX_A = 100000, MIN_A = 1;
   // upper bound for interesting a - two variables that are very far apart
   // are not interesting
-  public static final long interesting_upper_bound = 10;
+  public static final long interesting_upper_bound = 50;
   // the constant in the invariant x - y >= a
   public long a = MAX_A;
 

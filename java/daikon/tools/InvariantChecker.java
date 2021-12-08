@@ -316,12 +316,18 @@ public class InvariantChecker {
             continue;
           }
 
+          // this filter is confusing, do not use
           if (doFilter && fi.shouldKeep(inv) == null
              && !(inv instanceof IntDiffGreaterThan)) {
             // System.out.printf("inv ignored (filter): %s:%s%n",
             //                     inv.ppt.name(), inv.format());
             continue;
           }
+          
+          if (inv instanceof RangeInt) {
+            continue;
+          }
+
           activeInvariants.add(inv);
           // save old representation of invariant, since adding new samples
           // to it may change its representation

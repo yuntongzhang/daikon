@@ -15,6 +15,7 @@ import daikon.inv.Invariant;
 import daikon.inv.InvariantStatus;
 import daikon.inv.binary.twoScalar.IntDiffGreaterThan;
 import daikon.inv.filter.InvariantFilters;
+import daikon.inv.unary.scalar.RangeInt;
 import daikon.split.PptSplitter;
 import gnu.getopt.*;
 import java.io.File;

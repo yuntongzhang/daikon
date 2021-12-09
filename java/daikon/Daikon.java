@@ -104,6 +104,7 @@ import daikon.inv.unary.scalar.NonZero;
 import daikon.inv.unary.scalar.NonZeroFloat;
 import daikon.inv.unary.scalar.OneOfFloat;
 import daikon.inv.unary.scalar.OneOfScalar;
+import daikon.inv.unary.scalar.PositiveNearZero;
 import daikon.inv.unary.scalar.RangeFloat;
 import daikon.inv.unary.scalar.RangeInt;
 import daikon.inv.unary.scalar.UpperBound;
@@ -1596,8 +1597,9 @@ public final class Daikon {
       // Standard binary string invariants
       proto_invs.addAll(StdString.get_proto_all());
 
-      // IntDiff, newly added
+      // newly added
       proto_invs.add(IntDiffGreaterThan.get_proto());
+      proto_invs.add(PositiveNearZero.get_proto());
     }
 
     // Binary sequence-sequence invariants

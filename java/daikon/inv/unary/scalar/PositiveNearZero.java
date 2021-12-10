@@ -90,7 +90,7 @@ public class PositiveNearZero extends SingleScalar {
       String name = var().name_using(format);
       PptTopLevel pptt = ppt.parent;
 
-      return "0 <= " + name + "\n" + name + " <= " + c;
+      return name + " <= " + c;
     }
 
     @Override
@@ -114,6 +114,16 @@ public class PositiveNearZero extends SingleScalar {
           c = value;
       
       return InvariantStatus.NO_CHANGE;
+    }
+
+    // Used in InvariantChecker.
+    // Only check against the current value of c, without modifying it.
+    public InvariantStatus add_to_check(long value, int count) {
+        if (value < 0 || value > c) {
+            return InvariantStatus.FALSIFIED;
+        } else {
+            return InvariantStatus.NO_CHANGE;
+        }
     }
 
     @Override

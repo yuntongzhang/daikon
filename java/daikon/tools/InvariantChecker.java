@@ -15,6 +15,8 @@ import daikon.inv.Invariant;
 import daikon.inv.InvariantStatus;
 import daikon.inv.binary.twoScalar.IntDiffGreaterThan;
 import daikon.inv.filter.InvariantFilters;
+import daikon.inv.unary.scalar.Positive;
+import daikon.inv.unary.scalar.PositiveNearZero;
 import daikon.inv.unary.scalar.RangeInt;
 import daikon.split.PptSplitter;
 import gnu.getopt.*;
@@ -317,14 +319,18 @@ public class InvariantChecker {
             continue;
           }
 
-          // this filter is confusing, do not use
+          // when --filter is used, make sure they are not applied to 
+          // the new invariants.
           if (doFilter && fi.shouldKeep(inv) == null
-             && !(inv instanceof IntDiffGreaterThan)) {
+             && !(inv instanceof IntDiffGreaterThan)
+             && !(inv instanceof PositiveNearZero)) {
             // System.out.printf("inv ignored (filter): %s:%s%n",
             //                     inv.ppt.name(), inv.format());
             continue;
           }
           
+          // RangeInt supposed to be internel; yet InvariantChecker does not 
+          // consider the internel check. So we filter them out here.
           if (inv instanceof RangeInt) {
             continue;
           }
@@ -556,6 +562,10 @@ public class InvariantChecker {
             long val1 = ((Long) vt.getValue(v1)).longValue();
             long val2 = ((Long) vt.getValue(v2)).longValue();
             status = ((IntDiffGreaterThan) inv).add_to_check(val1, val2, 1);
+          } else if (inv instanceof PositiveNearZero) {
+            VarInfo v = inv.ppt.var_infos[0];
+            long value = ((Long) vt.getValue(v)).longValue();
+            status = ((PositiveNearZero) inv).add_to_check(value, 1);
           } else {
             status = inv.add_sample(vt, 1);
           }

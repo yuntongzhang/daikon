@@ -30,9 +30,10 @@ public class PositiveNearZero extends SingleScalar {
     public static boolean dkconfig_enabled = Invariant.invariantEnabledDefault;
     public static final Logger debug = Logger.getLogger("daikon.inv.unary.scalar.PositiveNearZero");
 
+    public static long MIN_C = 0;
     public static long MAX_C = 10;
     
-    public long c = MAX_C;
+    public long c = MIN_C;
 
     PositiveNearZero(PptSlice ppt) {
         super(ppt);
@@ -105,12 +106,12 @@ public class PositiveNearZero extends SingleScalar {
             debug,
             "add_modified (" + value + ",  ppt.num_values = " + ppt.num_values() + ")");
       }
-      if (value < 0 || value > c) {
+      if (value < MIN_C || value > MAX_C) {
         if (logOn() || debug.isLoggable(Level.FINE))
             log(debug, "destroy in add_modified (" + value + ",  " + count + ")");
         return InvariantStatus.FALSIFIED;
       }
-      if (value < c)
+      if (value > c)
           c = value;
       
       return InvariantStatus.NO_CHANGE;

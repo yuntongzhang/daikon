@@ -184,15 +184,15 @@ public class IntLimitUpperBound extends SingleScalar {
 
         // suppressor definitions (used in suppressions below)
 
-        NISuppressor v_upper = new NISuppressor(0, UpperBound.class);
+        // NISuppressor v_upper = new NISuppressor(0, UpperBound.class);
         NISuppressor near_zero = new NISuppressor(0, PositiveNearZero.class);
 
         suppressions =
             new NISuppressionSet(
                 new NISuppression[] {
 
-                    // v <= a => v < c, if a << c
-                    new NISuppression(v_upper, suppressee),
+                    // // v <= a => v < c, if a << c
+                    // new NISuppression(v_upper, suppressee),
                     // 0 <= v <= a => v < c, if a << c
                     new NISuppression(near_zero, suppressee),
 

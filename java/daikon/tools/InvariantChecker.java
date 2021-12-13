@@ -15,9 +15,11 @@ import daikon.inv.Invariant;
 import daikon.inv.InvariantStatus;
 import daikon.inv.binary.twoScalar.IntDiffGreaterThan;
 import daikon.inv.filter.InvariantFilters;
+import daikon.inv.unary.scalar.LowerBound;
 import daikon.inv.unary.scalar.Positive;
 import daikon.inv.unary.scalar.PositiveNearZero;
 import daikon.inv.unary.scalar.RangeInt;
+import daikon.inv.unary.scalar.UpperBound;
 import daikon.split.PptSplitter;
 import gnu.getopt.*;
 import java.io.File;
@@ -323,7 +325,9 @@ public class InvariantChecker {
           // the new invariants.
           if (doFilter && fi.shouldKeep(inv) == null
              && !(inv instanceof IntDiffGreaterThan)
-             && !(inv instanceof PositiveNearZero)) {
+             && !(inv instanceof PositiveNearZero)
+             && !(inv instanceof LowerBound)
+             && !(inv instanceof UpperBound)) {
             // System.out.printf("inv ignored (filter): %s:%s%n",
             //                     inv.ppt.name(), inv.format());
             continue;

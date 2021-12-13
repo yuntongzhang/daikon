@@ -95,6 +95,7 @@ import daikon.inv.ternary.threeScalar.FunctionBinaryFloat;
 import daikon.inv.ternary.threeScalar.LinearTernary;
 import daikon.inv.ternary.threeScalar.LinearTernaryFloat;
 import daikon.inv.unary.scalar.CompleteOneOfScalar;
+import daikon.inv.unary.scalar.IntLimitUpperBound;
 import daikon.inv.unary.scalar.IsPointer;
 import daikon.inv.unary.scalar.LowerBound;
 import daikon.inv.unary.scalar.LowerBoundFloat;
@@ -1600,6 +1601,7 @@ public final class Daikon {
       // newly added
       proto_invs.add(IntDiffGreaterThan.get_proto());
       proto_invs.add(PositiveNearZero.get_proto());
+      proto_invs.add(IntLimitUpperBound.get_proto());
     }
 
     // Binary sequence-sequence invariants

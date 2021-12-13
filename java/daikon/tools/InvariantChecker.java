@@ -15,6 +15,7 @@ import daikon.inv.Invariant;
 import daikon.inv.InvariantStatus;
 import daikon.inv.binary.twoScalar.IntDiffGreaterThan;
 import daikon.inv.filter.InvariantFilters;
+import daikon.inv.unary.scalar.IntLimitUpperBound;
 import daikon.inv.unary.scalar.LowerBound;
 import daikon.inv.unary.scalar.Positive;
 import daikon.inv.unary.scalar.PositiveNearZero;
@@ -326,8 +327,8 @@ public class InvariantChecker {
           if (doFilter && fi.shouldKeep(inv) == null
              && !(inv instanceof IntDiffGreaterThan)
              && !(inv instanceof PositiveNearZero)
-             && !(inv instanceof LowerBound)
-             && !(inv instanceof UpperBound)) {
+             && !(inv instanceof IntLimitUpperBound)
+             && !(inv instanceof LowerBound)) {
             // System.out.printf("inv ignored (filter): %s:%s%n",
             //                     inv.ppt.name(), inv.format());
             continue;
@@ -570,6 +571,10 @@ public class InvariantChecker {
             VarInfo v = inv.ppt.var_infos[0];
             long value = ((Long) vt.getValue(v)).longValue();
             status = ((PositiveNearZero) inv).add_to_check(value, 1);
+          } else if (inv instanceof IntLimitUpperBound) {
+            VarInfo v = inv.ppt.var_infos[0];
+            long value = ((Long) vt.getValue(v)).longValue();
+            status = ((IntLimitUpperBound) inv).add_to_check(value, 1);
           } else {
             status = inv.add_sample(vt, 1);
           }

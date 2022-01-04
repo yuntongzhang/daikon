@@ -567,6 +567,7 @@ public class InvariantChecker {
             long val1 = ((Long) vt.getValue(v1)).longValue();
             long val2 = ((Long) vt.getValue(v2)).longValue();
             status = ((IntDiffGreaterThan) inv).add_to_check(val1, val2, 1);
+            // output_stream.println(v1.name() + " is "+val1+ v2.name() + " is "+ val2 + " status is "+ status);
           } else if (inv instanceof PositiveNearZero) {
             VarInfo v = inv.ppt.var_infos[0];
             long value = ((Long) vt.getValue(v)).longValue();
@@ -595,7 +596,7 @@ public class InvariantChecker {
                       + FileIO.data_trace_state.filename);
             }
             failedInvariants.add(inv);
-            activeInvariants.remove(inv);
+            // activeInvariants.remove(inv);
             error_cnt++;
           } else { // no change after adding in new sample
             isInvariantViolatedByAll.put(inv, false);

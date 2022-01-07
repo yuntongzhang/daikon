@@ -577,7 +577,8 @@ public class InvariantChecker {
             long value = ((Long) vt.getValue(v)).longValue();
             status = ((IntLimitUpperBound) inv).add_to_check(value, 1);
           } else {
-            status = inv.add_sample(vt, 1);
+            // status = inv.add_sample(vt, 1);
+            status = inv.check_sample(vt, 1);
           }
 
           sample_cnt++;

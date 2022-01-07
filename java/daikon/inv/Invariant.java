@@ -1978,6 +1978,41 @@ public abstract class Invariant implements Serializable, Cloneable // but don't 
     }
   }
 
+  /**
+   * Check the specified sample against the invariant, without modifying it.
+   *
+   * @param vt the sample to add to this invariant
+   * @param count the number of occurrences of the sample to add to this invariant
+   * @return the result of adding the samples to this invariant
+   */
+  public InvariantStatus check_sample(@NonPrototype Invariant this, ValueTuple vt, int count) {
+
+    if (ppt instanceof PptSlice1) {
+
+      VarInfo v = ppt.var_infos[0];
+      UnaryInvariant unary_inv = (UnaryInvariant) this;
+      return (unary_inv.check(vt.getValue(v), vt.getModified(v), count));
+
+    } else if (ppt instanceof PptSlice2) {
+
+      VarInfo v1 = ppt.var_infos[0];
+      VarInfo v2 = ppt.var_infos[1];
+      BinaryInvariant bin_inv = (BinaryInvariant) this;
+      return (bin_inv.check_unordered(vt.getValue(v1), vt.getValue(v2), vt.getModified(v1), count));
+
+    } else /* must be ternary */ {
+
+      VarInfo v1 = ppt.var_infos[0];
+      VarInfo v2 = ppt.var_infos[1];
+      VarInfo v3 = ppt.var_infos[2];
+      assert (this instanceof TernaryInvariant)
+          : "invariant '" + format() + "' in slice " + ppt.name() + " is not ternary";
+      TernaryInvariant ternary_inv = (TernaryInvariant) this;
+      return (ternary_inv.check(
+          vt.getValue(v1), vt.getValue(v2), vt.getValue(v3), vt.getModified(v1), count));
+    }
+  }
+
   /** Check the rep invariants of this. */
   public void repCheck(@Prototype Invariant this) {}
 

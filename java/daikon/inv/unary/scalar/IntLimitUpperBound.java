@@ -124,6 +124,9 @@ public class IntLimitUpperBound extends SingleScalar {
           // get the next candidate which is larger than c
           for ( long candidate : power_of_two) {
               if (candidate <= c) continue;
+              // now new candidate is greater than current bound, 
+              // but need to check against current value as well
+              if (value >= candidate) continue;
               c = candidate;
               break;
           }

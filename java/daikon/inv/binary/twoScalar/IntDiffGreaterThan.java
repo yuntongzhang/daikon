@@ -24,7 +24,7 @@ import typequals.prototype.qual.NonPrototype;
 import typequals.prototype.qual.Prototype;
 
 /**
- * Represents an invariant of &ge; between diffenrence of two long scalars, and constant. 
+ * Represents an invariant of &ge; between diffenrence of two long scalars, and constant.
  * Prints as {@code x - y >= a}.
  */
 public final class IntDiffGreaterThan extends TwoScalar {
@@ -49,19 +49,26 @@ public final class IntDiffGreaterThan extends TwoScalar {
   // the constant in the invariant x - y >= a
   public long a = MAX_A;
 
-  IntDiffGreaterThan(PptSlice ppt) {
+  IntDiffGreaterThan(PptSlice ppt, boolean swap) {
     super(ppt);
+    this.swap = swap;
   }
 
-  @Prototype IntDiffGreaterThan() {
+  @Prototype IntDiffGreaterThan(boolean swap) {
     super();
+    this.swap = swap;
   }
 
-  private static @Prototype IntDiffGreaterThan proto = new @Prototype IntDiffGreaterThan();
+  private static @Prototype IntDiffGreaterThan proto = new @Prototype IntDiffGreaterThan(false);
+  private static @Prototype IntDiffGreaterThan proto_swap = new @Prototype IntDiffGreaterThan(true);
 
   /** Returns the prototype invariant for IntDiffGreaterThan */
-  public static @Prototype IntDiffGreaterThan get_proto() {
-    return proto;
+  public static @Prototype IntDiffGreaterThan get_proto(boolean swap) {
+    if (swap) {
+      return proto_swap;
+    } else {
+      return proto;
+    }
   }
 
   /** Returns whether or not this invariant is enabled. */
@@ -87,7 +94,7 @@ public final class IntDiffGreaterThan extends TwoScalar {
   @Override
   protected IntDiffGreaterThan instantiate_dyn(@Prototype IntDiffGreaterThan this, PptSlice slice) {
 
-    return new IntDiffGreaterThan(slice);
+    return new IntDiffGreaterThan(slice, swap);
   }
 
   // JHP: this should be removed in favor of checks in PptTopLevel
@@ -155,7 +162,7 @@ public final class IntDiffGreaterThan extends TwoScalar {
     return clone().add_modified(v1, v2, count);
   }
 
-  @Override 
+  @Override
   public InvariantStatus add_modified(long v1, long v2, int count) {
     if (logDetail() || debug.isLoggable(Level.FINE)) {
       log(
@@ -172,16 +179,16 @@ public final class IntDiffGreaterThan extends TwoScalar {
     // use new samples to push a to lower values
     if (diff < a)
         a = diff; // update bound
-    
+
     return InvariantStatus.NO_CHANGE;
   }
-  
+
   // Used in InvariantChecker.
   // Only check against the current value of a, without modifying it.
   public InvariantStatus add_to_check(long v1, long v2, int count) {
     if (a >= interesting_upper_bound) {
       // InvaraintChecker filters out uninteresting invariants with large a
-      // if InvariantChecker sees a NO_CHANGE sample, this invariant will not 
+      // if InvariantChecker sees a NO_CHANGE sample, this invariant will not
       // be returned
       return InvariantStatus.NO_CHANGE;
     }
@@ -264,31 +271,29 @@ public final class IntDiffGreaterThan extends TwoScalar {
   } // isObviousDynamically
 
 
-  /** NI suppressions, initialized in get_ni_suppressions() */
-  private static @Nullable NISuppressionSet suppressions = null;
-
   /** Returns the non-instantiating suppressions for this invariant. */
   @Pure
   @Override
   public @NonNull NISuppressionSet get_ni_suppressions() {
-    if (suppressions == null) {
-
-      NISuppressee suppressee = new NISuppressee(IntDiffGreaterThan.class, 2);
-
-      // suppressor definitions (used in suppressions below)
-
-      NISuppressor v1_eq_v2 = new NISuppressor(0, 1, IntEqual.class);
-
-      suppressions =
-          new NISuppressionSet(
-              new NISuppression[] {
-
-                  // v1 == v2 => v1 - v2 >= 0
-                  new NISuppression(v1_eq_v2, suppressee),
-
-              });
+    if (swap) {
+      return suppressions_swap;
+    } else {
+      return suppressions;
     }
-    return suppressions;
   }
 
+  // suppressee (unswapped)
+  private static NISuppressee suppressee = new NISuppressee(IntDiffGreaterThan.class, false);
+
+  private static NISuppressor v1_eq_v2 = new NISuppressor(0, 1, IntEqual.class);
+
+  private static NISuppressionSet suppressions =
+    new NISuppressionSet(
+        new NISuppression[] {
+
+            // v1 == v2 => v1 - v2 >= 0
+            new NISuppression(v1_eq_v2, suppressee),
+
+        });
+  private static NISuppressionSet suppressions_swap = suppressions.swap();
 }

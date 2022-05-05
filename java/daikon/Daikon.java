@@ -1599,7 +1599,8 @@ public final class Daikon {
       proto_invs.addAll(StdString.get_proto_all());
 
       // newly added
-      proto_invs.add(IntDiffGreaterThan.get_proto());
+      proto_invs.add(IntDiffGreaterThan.get_proto(false));
+      proto_invs.add(IntDiffGreaterThan.get_proto(true));
       proto_invs.add(PositiveNearZero.get_proto());
       proto_invs.add(IntLimitUpperBound.get_proto());
     }

@@ -322,7 +322,7 @@ public class InvariantChecker {
             continue;
           }
 
-          // when --filter is used, make sure they are not applied to 
+          // when --filter is used, make sure they are not applied to
           // the new invariants.
           if (doFilter && fi.shouldKeep(inv) == null
              && !(inv instanceof IntDiffGreaterThan)
@@ -333,8 +333,8 @@ public class InvariantChecker {
             //                     inv.ppt.name(), inv.format());
             continue;
           }
-          
-          // RangeInt supposed to be internel; yet InvariantChecker does not 
+
+          // RangeInt supposed to be internel; yet InvariantChecker does not
           // consider the internel check. So we filter them out here.
           if (inv instanceof RangeInt) {
             continue;
@@ -380,7 +380,7 @@ public class InvariantChecker {
     //         + ", which is "
     //         + percent
     //         + ".");
-    
+
     System.out.println("~~~ Printing invariants violated by all samples ~~~");
     for (Invariant inv : isInvariantViolatedByAll.keySet()) {
       if (isInvariantViolatedByAll.get(inv) == true) {
@@ -558,12 +558,12 @@ public class InvariantChecker {
           // Store string representation of original invariant for verbose mode
           String invRep = quiet ? null : inv.format();
 
-          // we can't use the normal routine for IntDiffGreaterThan: simply adding 
+          // we can't use the normal routine for IntDiffGreaterThan: simply adding
           // new samples to it will refine bounds, instead of invalidating it
           InvariantStatus status;
           if (inv instanceof IntDiffGreaterThan) {
-            VarInfo v1 = inv.ppt.var_infos[0];
-            VarInfo v2 = inv.ppt.var_infos[1];
+            VarInfo v1 = ((IntDiffGreaterThan) inv).var1();
+            VarInfo v2 = ((IntDiffGreaterThan) inv).var2();
             long val1 = ((Long) vt.getValue(v1)).longValue();
             long val2 = ((Long) vt.getValue(v2)).longValue();
             status = ((IntDiffGreaterThan) inv).add_to_check(val1, val2, 1);

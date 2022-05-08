@@ -247,13 +247,6 @@ public final class IntDiffGreaterThan extends TwoScalar {
 
   @Pure
   @Override
-  public boolean isSameFormula(Invariant other) {
-    TwoScalar inv = (TwoScalar) other;
-    return this.getClass() == inv.getClass();
-  }
-
-  @Pure
-  @Override
   public boolean isExclusiveFormula(Invariant other) {
     return false;
   }
